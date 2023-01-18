@@ -1,0 +1,110 @@
+variables:
+  REMOTE_HOST: deploy@172.16.5.121
+  BACKEND_IMAGE: ${CI_REGISTRY_IMAGE}/backend
+  FRONTEND_IMAGE: ${CI_REGISTRY_IMAGE}/frontend
+stages:
+  - test
+  - build
+  - deploy
+
+test_other:
+  image: node:latest
+  stage: test
+  script:
+    # Go to backend directory
+  - cd backend
+  # Run npm commands
+  - npm install && npm run lint && npm run test
+  # Go to frontend directory
+  - cd ../frontend
+  # Remove package-lock.json because of a bug
+  # (https://stackoverflow.com/questions/63321707/react-npm-install-fails)
+  - rm package-lock.json
+  # Run npm commands
+  - npm install && npm test
+  except:
+    - main
+    - production
+
+
+test_main:
+  image: node:latest
+  stage: test
+  script:
+    # Go to backend directory
+    - cd backend
+    # Run npm commands
+    - npm install && npm test
+    # Go to frontend directory
+    - cd ../frontend
+    # Remove package-lock.json because of a bug
+    # (https://stackoverflow.com/questions/63321707/react-npm-install-fails)
+    - rm package-lock.json
+    # Run npm commands
+    - npm install && npm test
+  only: 
+    - main
+
+
+build_other:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
+    # Build backend
+    - docker build -f backend/DockerfileServer -t "${BACKEND_IMAGE}" .
+    # Build frontend
+    - docker build -f frontend/DockerfileServer -t "${FRONTEND_IMAGE}" .
+  except:
+    - main
+    - production
+
+
+build_main:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p "${CI_JOB_TOKEN}" "${CI_REGISTRY}"
+    # Build & push backend
+    - docker build -f backend/DockerfileServer -t "${BACKEND_IMAGE}" .
+    - docker push "${BACKEND_IMAGE}"
+    # Build & push frontend
+    - docker build -f frontend/DockerfileServer -t "${FRONTEND_IMAGE}" .
+    - docker push "${FRONTEND_IMAGE}"
+  only: 
+    - main
+
+
+deploy_main:
+  image: alpine:latest
+  stage: deploy
+  environment:
+      name: main
+      url:  172.16.5.121
+  script:
+    - apk update && apk add rsync openssh curl
+    # Prepare SSH settings
+    - mkdir -p ~/.ssh && (umask  077 ; echo "${DEPLOY_KEY_PRIVATE}" | base64 -d > ~/.ssh/id_rsa)
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    # Prepare files for transfer
+    - mkdir remote_dir
+    - cp docker-compose.server.yml remote_dir/docker-compose.yml
+    - echo "BACKEND_IMAGE=${BACKEND_IMAGE}" >> remote_dir/.env
+    - echo "FRONTEND_IMAGE=${FRONTEND_IMAGE}" >> remote_dir/.env
+    # Transfer to server
+    - rsync -r remote_dir "${REMOTE_HOST}:./"
+    # Run commands on the server
+    - ssh ${REMOTE_HOST} /bin/bash 
+            "
+            echo 'Starting..';
+            cd ~/remote_dir;
+            docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY;
+            docker-compose pull;
+            docker-compose up -d;
+            "
+  only:
+    - main

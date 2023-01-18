@@ -1,0 +1,28 @@
+
+GET http://localhost:4000/ HTTP/1.1
+###
+GET http://localhost:4000/api/v1 HTTP/1.1
+###
+GET http://localhost:4000/api/v1/emojis HTTP/1.1
+###
+GET http://localhost:4000/api/v1/tasks HTTP/1.1
+###
+GET http://localhost:4000/api/v1/tasks/2 HTTP/1.1
+###
+POST http://localhost:4000/api/v1/tasks HTTP/1.1
+content-type: application/json
+
+{
+    "id": 4,
+    "name": "Go fishing"
+}
+###
+PATCH  http://localhost:4000/api/v1/tasks/3 HTTP/1.1
+content-type: application/json
+
+{
+    "name": "Go skiing"
+}
+###
+DELETE http://localhost:4000/api/v1/tasks/4 HTTP/1.1
+content-type: application/json

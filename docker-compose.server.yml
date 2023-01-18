@@ -1,0 +1,26 @@
+services:
+
+  frontend:
+    image: ${FRONTEND_IMAGE}
+    ports:
+      - "8080:3000"
+    env_file:
+      - .env
+    restart: always
+    
+  backend:
+    image: ${BACKEND_IMAGE}
+    ports:
+      - "4040:4000"
+    env_file:
+      - .env
+    restart: always
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./data:/opt/app/data/db
+    ports:
+      - '27017:27017'
+    restart: always

@@ -1,0 +1,38 @@
+body {
+    background-color: #F8F8FF;
+}
+
+h1 {
+    margin-left: 40px;
+}
+
+#input {
+    width: 400px;
+    height: 20px;
+    margin-left: 40px;
+}
+
+#submit {
+    margin-left: 20px;
+    cursor: pointer
+}
+
+button {
+    height: 25px;
+    margin-left: 20px;
+    cursor: pointer
+}
+
+table {
+    margin-left: 40px;
+    margin-top: 20px;
+    margin-left: 40px;
+    text-align: left;
+}
+
+#submitBtn {
+    height: 25px;
+    margin-left: 10px;
+    width: 90px;
+    cursor: pointer
+}
