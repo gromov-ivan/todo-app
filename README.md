@@ -1,4 +1,4 @@
-## ToDo App
+## To-Do List App
 
 - An Express backend that handles ToDo tasks stored in an array via a REST API endpoint.
 - A React frontend with a ToDo app where initial tasks are fetched from the backend.
