@@ -8,9 +8,9 @@ const TaskList = () => {
     const [newTask, setNewTask] = useState({id: '', name: ''});
     const [id, setId] = useState(4);
     // const [listdb, setListdb] = useState([]);
-    
 
-    useEffect(() => { 
+
+    useEffect(() => {
         const fetchTasks = async() => {
             const response = await fetch(`${process.env.REACT_APP_BACKEND}/v1/tasks`);
             const data = await response.json();
@@ -19,14 +19,14 @@ const TaskList = () => {
         }
         fetchTasks();
     }, []);
-    
+
     const addTask= async (event)=>{
         await event.preventDefault();
         if(newTask.name === ''){
             return;
         } else {
-            setTasks([...tasks, newTask]);  
-            setId(id+1);          
+            setTasks([...tasks, newTask]);
+            setId(id+1);
         }
         setNewTask({id:'', name:''});
     }
@@ -73,7 +73,7 @@ const TaskList = () => {
 
     return(
         <>
-            <h1>My To-Do list</h1>
+            <h2>To-Do list</h2>
             <form onSubmit={addTask}>
             <input id = "input" type="text" placeholder="Type a task" name="name" value={newTask.name} onChange={inputChanged}></input>
             <input id='submitBtn' type="submit" value = "Add"/>
