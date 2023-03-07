@@ -18,3 +18,9 @@ npm run dev
 ```
 npm start
 ```
+## Preview
+<img
+  src="images/To-Do list.jpg"
+  alt="To-Do list"
+  title="To-Do list"
+  style="display: inline-block; margin: 0 auto; width: 500px">
