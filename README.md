@@ -24,3 +24,7 @@ npm start
   alt="To-Do list"
   title="To-Do list"
   style="display: inline-block; margin: 0 auto; width: 600px">
+
+
+## Technologies
+React, Node.js, HTML, CSS
