@@ -27,4 +27,4 @@ npm start
 
 
 ## Technologies
-React, Node.js, HTML, CSS
+React, Node.js, MongoDB, Docker
